@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/require-user";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -43,6 +44,8 @@ export default async function Profile({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ tab?: string }>;
 }) {
+  await requireUser();
+
   const { id } = await params;
   const { tab = "geral" } = await searchParams;
   const [s, config] = await Promise.all([studentDetail(id), settings()]);

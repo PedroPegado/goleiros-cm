@@ -1,16 +1,19 @@
 import "server-only";
+import { requireUser } from "@/lib/require-user";
 import { cache } from "react";
 import { db } from "@/lib/db";
 import { ensureMonthlyPayments } from "./payments";
 import { toDate, today } from "@/lib/rules";
-export const settings = cache(
-  async () =>
+export const settings = cache(async () => {
+  await requireUser();
+  return (
     (await db.setting.findUnique({ where: { id: "default" } })) ?? {
       id: "default",
       dueSoonDays: 3,
       defaultFee: 150,
-    },
-);
+    }
+  );
+});
 export const syncPayments = cache(async () => {
   await ensureMonthlyPayments();
 });

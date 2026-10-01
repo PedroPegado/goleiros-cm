@@ -11,9 +11,11 @@ import {
   civilSchema,
 } from "@/lib/validation";
 import { toDate, dueDateFor, today } from "@/lib/rules";
+import { requireUser } from "@/lib/require-user";
 type Result = { ok: true; id?: string } | { ok: false; error: string };
-/** Single mutation boundary: a future authorization check belongs here. */
+/** Every exported mutation enters this server-side authorization boundary. */
 async function mutate(work: () => Promise<string | void>): Promise<Result> {
+  await requireUser();
   try {
     const id = await work();
     revalidatePath("/", "layout");

@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/require-user";
 import Link from "next/link";
 import { PageTitle, Stat, Badge, Empty, Avatar } from "@/components/ui";
 import { db } from "@/lib/db";
@@ -22,6 +23,8 @@ export default async function Payments({
     student?: string;
   }>;
 }) {
+  await requireUser();
+
   if (!process.env.DATABASE_URL) return null;
   const q = await searchParams;
   const month = Number(q.month) || Number(today().slice(5, 7)),

@@ -1,6 +1,6 @@
 # Goleiros — Centro de performance
 
-Aplicação mobile-first para um professor de goleiros: cadastro de atletas, avaliações parciais, evolução, medidas físicas, observações e mensalidades com histórico. A entrada abre diretamente o Dashboard. Não há login, entidade User, envio de mensagens ou integração paga.
+Aplicação mobile-first para um professor de goleiros: cadastro de atletas, avaliações parciais, evolução, medidas físicas, observações e mensalidades com histórico. O acesso usa e-mail e senha, sessão persistente e logout. Após entrar, o professor acessa o Dashboard. Não há cadastro público, OAuth, envio de mensagens ou integração paga. Veja [Autenticação](AUTENTICACAO.md) para instalação, recuperação administrativa e deploy.
 
 ## Executar
 
@@ -9,17 +9,17 @@ Requisitos: Node.js **22.14 ou superior**, npm e PostgreSQL (Neon ou local).
 ```bash
 npm ci
 cp .env.example .env
-# Preencha DATABASE_URL e DIRECT_URL no .env
+# Preencha DATABASE_URL, DIRECT_URL, AUTH_SECRET, AUTH_URL, ADMIN_EMAIL e ADMIN_PASSWORD no .env
 npm run db:deploy
 npm run db:seed
 npm run dev
 ```
 
-No PowerShell, use `Copy-Item .env.example .env`. Abra [localhost:3000](http://localhost:3000). `db:seed` instala somente os 12 critérios padrão e configurações; não cadastra atletas reais ou fictícios.
+No PowerShell, use `Copy-Item .env.example .env`. Abra [localhost:3000](http://localhost:3000). `db:seed` instala os 12 critérios padrão, configurações e administrador. Não cadastra atletas reais ou fictícios. Reexecutar o seed redefine a senha para ADMIN_PASSWORD.
 
 ### Demonstração gratuita inteiramente local
 
-Em uma instalação nova, sem `.env`, execute `npm run db:local` em um terminal. Esse utilitário de desenvolvimento inicia PostgreSQL em `127.0.0.1:55432`, gera senha aleatória e cria `.env`. Não sobrescreve um `.env` existente. Em outro terminal:
+Em uma instalação nova, sem `.env`, execute `npm run db:local` em um terminal. Esse utilitário de desenvolvimento inicia PostgreSQL em `127.0.0.1:55432`, gera senha aleatória e cria `.env`. Não sobrescreve um `.env` existente. Configure também as variáveis de autenticação descritas em AUTENTICACAO.md. Em outro terminal:
 
 ```bash
 npm run db:deploy
@@ -77,7 +77,7 @@ Use uma branch/banco Neon separado para testes e previews. Nunca execute `migrat
 
 ## Modelo e regras
 
-`Student` possui avaliações, pagamentos, medidas e observações. `EvaluationScore` liga uma avaliação a um `EvaluationCriterion`. As configurações ficam em `Setting`. Não há entidade User nem relacionamento com autor.
+`Student` possui avaliações, pagamentos, medidas e observações. `EvaluationScore` liga uma avaliação a um `EvaluationCriterion`. As configurações ficam em `Setting`. A entidade `User` guarda o administrador e seu hash de senha; avaliações e observações continuam sem relacionamento obrigatório com autor.
 
 - Datas civis são PostgreSQL `DATE`, convertidas na fronteira para `YYYY-MM-DD`. A interface exibe `DD/MM/YYYY`. A data de hoje usa `America/Fortaleza`; não se formata nascimento/vencimento como um timestamp local.
 - Idade é calculada a partir do nascimento. A altura e o peso atuais são a medida não nula mais recente de cada atributo; registrar apenas peso não apaga a altura.
@@ -107,7 +107,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Os testes E2E precisam do banco local de demonstração com migrations e seed aplicados. Iniciam `next start` se a porta 3000 estiver livre; faça build antes. Criam/excluem um atleta de teste e verificam edição, avaliação parcial com zero, evolução, pagamento, medidas, observações, busca, desativação e exclusão. Um teste altera temporariamente a janela de lembretes e a restaura para três dias. **Use banco de teste.**
+Os testes E2E precisam do banco local de demonstração com migrations e seed aplicados. Usam `.env.test` e iniciam `next start` na porta 3100; faça build antes. A configuração recusa bancos remotos. Os testes fazem login antes dos fluxos privados. Criam/excluem um atleta de teste e verificam edição, avaliação parcial com zero, evolução, pagamento, medidas, observações, busca, desativação e exclusão. Um teste altera temporariamente a janela de lembretes e a restaura para três dias. **Use banco de teste.**
 
 As telas principais são capturadas em 375, 390, 430, 768, 1024 e 1440px em `artifacts/screenshots/`. Há checagem automática de overflow horizontal. Resultados detalhados ficam em `playwright-report/`. São verificações em Chromium; não substituem testes em aparelhos físicos/Safari.
 
@@ -120,21 +120,17 @@ npm run start
 
 1. Envie o repositório para seu Git e importe na Vercel como Next.js.
 2. Escolha Node 22.x (ou superior compatível).
-3. Defina `DATABASE_URL` e `DIRECT_URL` separadamente em Production/Preview.
+3. Defina `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET` e `AUTH_URL` separadamente em Production/Preview. Para executar o seed, configure também `ADMIN_EMAIL` e `ADMIN_PASSWORD`.
 4. Execute `npm run db:deploy` e `npm run db:seed` contra o banco de destino em um ambiente confiável antes do primeiro acesso. Não execute o seed demo.
 5. Use Install Command `npm ci` e Build Command `npm run build`. O postinstall/build geram o cliente Prisma.
 6. Publique e confira Dashboard, cadastro e persistência.
 
-Migrations são uma etapa de release explícita para evitar alterar banco de produção durante um preview. O build não precisa consultar o banco; as páginas são dinâmicas. Se faltar configuração, a interface orienta a configurar o banco, sem simular sucesso com dados de exemplo.
+Migrations são uma etapa de release explícita para evitar alterar banco de produção durante um preview. O build não precisa consultar o banco; as páginas são dinâmicas. A configuração de autenticação é obrigatória; sem AUTH_SECRET válido o acesso permanece bloqueado.
 
 ### Gratuidade: limite concreto da Vercel
 
 Nenhuma funcionalidade exige assinatura, API de mensagens, armazenamento pago, IA ou cron. O PostgreSQL pode rodar no Neon Free dentro das cotas vigentes ou localmente. Porém, o **Vercel Hobby é restrito a uso pessoal e não comercial**, segundo a [documentação oficial](https://vercel.com/docs/plans/hobby). Um sistema usado na operação comercial de um professor/escola pode não se enquadrar. Portanto não se promete hospedagem comercial gratuita na Vercel e nenhum plano pago foi contratado. A alternativa sem assinatura já implementada é executar o sistema e o PostgreSQL localmente. As [cotas Neon](https://neon.com/docs/introduction/plans) também devem ser verificadas antes do uso.
 
-### Privacidade sem login
+### Privacidade e autenticação
 
-Esta versão respeita o requisito de **não implementar autenticação**. Consequentemente, qualquer pessoa com acesso ao endereço pode ler/alterar registros e fotos; Server Actions e IDs não são barreira de acesso. `robots.txt`, metadados e `X-Robots-Tag` evitam indexação cooperativa, mas **não tornam o site privado**.
-
-Não publique dados reais de menores em uma URL acessível sem controle de acesso. A demonstração usa somente dados fictícios. Para operação com dados reais, mantenha acesso restrito na infraestrutura ou inclua autenticação futuramente. O ponto central de mutações em `src/actions/index.ts` e os serviços de consulta permitem adicionar verificação de identidade sem remodelar alunos e avaliações; leituras e mutações precisam ser protegidas juntas. Não há login oculto ou senha padrão nesta entrega.
-
-Nenhuma credencial Neon/Vercel foi presumida. A validação local não significa que um deploy remoto foi realizado.
+Todas as páginas de alunos, avaliações, pagamentos e configurações exigem sessão no servidor. Login e alteração de senha são descritos em [AUTENTICACAO.md](AUTENTICACAO.md). O banco Neon foi configurado, mas nenhum deploy Vercel foi realizado.

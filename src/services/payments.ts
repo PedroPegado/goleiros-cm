@@ -1,4 +1,5 @@
 import "server-only";
+import { requireUser } from "@/lib/require-user";
 import { db } from "@/lib/db";
 import { dueDateFor, toDate, today } from "@/lib/rules";
 
@@ -7,6 +8,7 @@ export async function ensureMonthlyPayments(
   year = Number(today().slice(0, 4)),
   month = Number(today().slice(5, 7)),
 ) {
+  await requireUser();
   const end = dueDateFor(year, month, 31);
   if (`${year}-${String(month).padStart(2, "0")}` > today().slice(0, 7)) return;
   const students = await db.student.findMany({

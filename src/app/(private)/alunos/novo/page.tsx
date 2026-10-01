@@ -1,7 +1,10 @@
+import { requireUser } from "@/lib/require-user";
 import { PageTitle } from "@/components/ui";
 import { StudentForm } from "@/components/forms";
 import { settings } from "@/services/queries";
 export default async function NewStudent() {
+  await requireUser();
+
   if (!process.env.DATABASE_URL) return null;
   const config = await settings();
   return (

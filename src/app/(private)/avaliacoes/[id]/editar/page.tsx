@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/require-user";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { PageTitle } from "@/components/ui";
@@ -8,6 +9,8 @@ export default async function EditEvaluation({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireUser();
+
   const { id } = await params;
   const e = await db.evaluation.findUnique({
     where: { id },

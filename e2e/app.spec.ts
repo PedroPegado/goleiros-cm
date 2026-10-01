@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { today } from "../src/lib/rules";
 import { PrismaClient } from "@prisma/client";
+import { login } from "./helpers";
+test.beforeEach(async ({ page }) => {
+  await login(page);
+});
 test("critério personalizado mantém histórico ao ser desativado", async ({
   page,
 }) => {

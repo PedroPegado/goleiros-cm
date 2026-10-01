@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/require-user";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -21,6 +22,8 @@ import {
 } from "@/lib/rules";
 import { PageTitle, Stat, Avatar, Empty, Button } from "@/components/ui";
 export default async function Dashboard() {
+  await requireUser();
+
   if (!process.env.DATABASE_URL) return null;
   await syncPayments();
   const now = today();

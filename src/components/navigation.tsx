@@ -1,4 +1,5 @@
 "use client";
+import { LogoutButton } from "./auth-forms";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -129,6 +130,7 @@ export function Header({
         )}
       </div>
       <div className="header-actions">
+        <LogoutButton />
         <span className="header-date">Área do professor</span>
         <div className="notification-wrap">
           <button

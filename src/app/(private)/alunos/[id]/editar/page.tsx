@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/require-user";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { civil } from "@/lib/rules";
@@ -8,6 +9,8 @@ export default async function EditStudent({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireUser();
+
   const { id } = await params;
   const s = await db.student.findUnique({ where: { id } });
   if (!s) notFound();

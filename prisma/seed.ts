@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { seedAdmin } from "./admin";
 import { today, toDate, dueDateFor } from "../src/lib/rules";
 const db = new PrismaClient();
 const names = [
@@ -16,6 +17,7 @@ const names = [
   "Concentração",
 ];
 async function main() {
+  await seedAdmin(db);
   for (const [order, name] of names.entries())
     await db.evaluationCriterion.upsert({
       where: { id: `criterion-${order}` },

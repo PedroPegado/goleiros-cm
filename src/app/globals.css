@@ -1,4 +1,134 @@
 @import "tailwindcss";
+
+.login-page {
+  padding: 0;
+  margin: 0;
+  max-width: none;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.login-story {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #143d2e;
+  color: #f4f8ed;
+  padding: 28px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.login-story .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 0;
+}
+.login-story .brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 46px;
+  border-radius: 10px;
+  background: #237e58;
+}
+.login-story .brand small {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1.3px;
+  color: #b8d0bf;
+}
+.login-story h1 {
+  font-size: 36px;
+  line-height: 1.14;
+  margin: 16px 0;
+}
+.login-story p {
+  font-size: 13px;
+  max-width: 290px;
+  color: #bdd4c4;
+}
+.login-story .pitch {
+  opacity: 0.6;
+  right: -90px;
+  top: 50px;
+}
+.login-story-footer {
+  display: none;
+}
+.login-panel {
+  padding: 32px 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-form-wrap {
+  width: 100%;
+  max-width: 380px;
+}
+.login-form-wrap h2 {
+  font-size: 28px;
+  letter-spacing: -0.7px;
+  margin: 10px 0;
+}
+.login-form-wrap > p {
+  font-size: 13px;
+}
+.login-form {
+  margin-top: 28px;
+}
+.login-form input {
+  font-size: 16px;
+  min-height: 50px;
+}
+.login-form .button {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 50px;
+  justify-content: space-between;
+}
+.login-note {
+  margin-top: 26px;
+  text-align: center;
+  color: #69796d;
+}
+.logout-button {
+  padding: 9px 10px;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .login-page {
+    grid-template-columns: 1fr 1fr;
+  }
+  .login-story {
+    padding: 50px;
+    justify-content: space-between;
+    min-height: 100dvh;
+  }
+  .login-story h1 {
+    font-size: clamp(38px, 4.5vw, 66px);
+  }
+  .login-story-footer {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+  .login-story .pitch {
+    width: 550px;
+    height: 700px;
+    top: 100px;
+    right: -300px;
+  }
+  .login-panel {
+    padding: 50px 35px;
+  }
+}
 @theme {
   --font-sans: "Segoe UI", Arial, sans-serif;
 }

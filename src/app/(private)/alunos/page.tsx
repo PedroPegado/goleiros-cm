@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/require-user";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageTitle, Button } from "@/components/ui";
@@ -12,6 +13,8 @@ import {
   today,
 } from "@/lib/rules";
 export default async function Students() {
+  await requireUser();
+
   if (!process.env.DATABASE_URL) return null;
   const [students, config] = await Promise.all([studentList(), settings()]);
   return (

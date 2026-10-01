@@ -1,8 +1,12 @@
+import { requireUser } from "@/lib/require-user";
 import { db } from "@/lib/db";
 import { settings } from "@/services/queries";
 import { PageTitle, Badge } from "@/components/ui";
 import { SettingsForm, CriterionForm, Modal } from "@/components/forms";
+import { ChangePasswordForm } from "@/components/auth-forms";
 export default async function Settings() {
+  await requireUser();
+
   if (!process.env.DATABASE_URL) return null;
   const [config, criteria] = await Promise.all([
     settings(),
@@ -54,12 +58,11 @@ export default async function Settings() {
         </div>
       </section>
       <section className="card">
-        <h2>Sobre o acesso</h2>
+        <h2>Alterar senha</h2>
         <p className="muted">
-          Esta versão não possui login. Quem tiver acesso à URL poderá consultar
-          e alterar os dados. A proteção contra indexação não é controle de
-          acesso. Use dados fictícios em ambientes acessíveis publicamente.
+          Mantenha o acesso aos dados dos alunos protegido.
         </p>
+        <ChangePasswordForm />
       </section>
     </div>
   );

@@ -1,4 +1,7 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
+vi.mock("../src/lib/require-user", () => ({
+  requireUser: vi.fn().mockResolvedValue({ id: "test" }),
+}));
 import { db } from "../src/lib/db";
 import { ensureMonthlyPayments } from "../src/services/payments";
 import { today, toDate, dueDateFor } from "../src/lib/rules";
