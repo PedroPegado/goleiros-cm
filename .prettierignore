@@ -1,0 +1,8 @@
+node_modules
+.next
+.local-postgres
+package-lock.json
+artifacts
+playwright-report
+test-results
+prisma/migrations

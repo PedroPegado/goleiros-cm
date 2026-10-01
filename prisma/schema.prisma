@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum PaymentMethod {
+  PIX
+  DINHEIRO
+  TRANSFERENCIA
+  CARTAO
+  OUTRO
+}
+
+model Student {
+  id            String                @id @default(cuid())
+  name          String
+  birthDate     DateTime              @db.Date
+  guardianName  String
+  guardianPhone String
+  dueDay        Int
+  monthlyFee    Decimal               @db.Decimal(10, 2)
+  joinedAt      DateTime              @db.Date
+  status        StudentStatus         @default(ACTIVE)
+  notes         String                @default("")
+  photo         String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  evaluations   Evaluation[]
+  payments      Payment[]
+  measurements  PhysicalMeasurement[]
+  studentNotes  StudentNote[]
+
+  @@index([status, name])
+}
+
+model EvaluationCriterion {
+  id          String            @id @default(cuid())
+  name        String            @unique
+  description String            @default("")
+  active      Boolean           @default(true)
+  order       Int               @default(0)
+  scores      EvaluationScore[]
+}
+
+model Evaluation {
+  id        String            @id @default(cuid())
+  studentId String
+  student   Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime          @db.Date
+  notes     String            @default("")
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  scores    EvaluationScore[]
+
+  @@index([studentId, date])
+}
+
+model EvaluationScore {
+  id           String              @id @default(cuid())
+  evaluationId String
+  evaluation   Evaluation          @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  criterionId  String
+  criterion    EvaluationCriterion @relation(fields: [criterionId], references: [id], onDelete: Restrict)
+  value        Float
+
+  @@unique([evaluationId, criterionId])
+}
+
+model Payment {
+  id             String         @id @default(cuid())
+  studentId      String
+  student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  referenceMonth Int
+  referenceYear  Int
+  dueDate        DateTime       @db.Date
+  amount         Decimal        @db.Decimal(10, 2)
+  status         PaymentStatus  @default(PENDING)
+  paidAt         DateTime?      @db.Date
+  paymentMethod  PaymentMethod?
+  notes          String         @default("")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([studentId, referenceMonth, referenceYear])
+  @@index([referenceYear, referenceMonth, status])
+  @@index([status, dueDate])
+}
+
+model PhysicalMeasurement {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  height    Float?
+  weight    Float?
+  createdAt DateTime @default(now())
+
+  @@index([studentId, date])
+}
+
+model StudentNote {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([studentId, date])
+}
+
+model Setting {
+  id          String  @id @default("default")
+  dueSoonDays Int     @default(3)
+  defaultFee  Decimal @default(150) @db.Decimal(10, 2)
+}
