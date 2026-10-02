@@ -88,6 +88,7 @@ model Evaluation {
   scores    EvaluationScore[]
 
   @@index([studentId, date])
+  @@index([date, createdAt])
 }
 
 model EvaluationScore {
@@ -119,6 +120,7 @@ model Payment {
   @@unique([studentId, referenceMonth, referenceYear])
   @@index([referenceYear, referenceMonth, status])
   @@index([status, dueDate])
+  @@index([status, paidAt])
 }
 
 model PhysicalMeasurement {

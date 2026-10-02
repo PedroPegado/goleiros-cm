@@ -1,10 +1,11 @@
 import "server-only";
+import { cache } from "react";
 import { requireUser } from "@/lib/require-user";
 import { db } from "@/lib/db";
 import { dueDateFor, toDate, today } from "@/lib/rules";
 
 /** Idempotent even across concurrent serverless requests; overdue is derived on read. */
-export async function ensureMonthlyPayments(
+const ensure = cache(async function ensureMonthlyPayments(
   year = Number(today().slice(0, 4)),
   month = Number(today().slice(5, 7)),
 ) {
@@ -12,7 +13,11 @@ export async function ensureMonthlyPayments(
   const end = dueDateFor(year, month, 31);
   if (`${year}-${String(month).padStart(2, "0")}` > today().slice(0, 7)) return;
   const students = await db.student.findMany({
-    where: { status: "ACTIVE", joinedAt: { lte: toDate(end) } },
+    where: {
+      status: "ACTIVE",
+      joinedAt: { lte: toDate(end) },
+      payments: { none: { referenceYear: year, referenceMonth: month } },
+    },
     select: { id: true, dueDay: true, monthlyFee: true },
   });
   if (students.length)
@@ -26,4 +31,11 @@ export async function ensureMonthlyPayments(
       })),
       skipDuplicates: true,
     });
+});
+
+export function ensureMonthlyPayments(
+  year = Number(today().slice(0, 4)),
+  month = Number(today().slice(5, 7)),
+) {
+  return ensure(year, month);
 }

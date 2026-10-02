@@ -18,7 +18,7 @@ async function mutate(work: () => Promise<string | void>): Promise<Result> {
   await requireUser();
   try {
     const id = await work();
-    revalidatePath("/", "layout");
+    revalidatePath("/(private)", "layout");
     return { ok: true, ...(id ? { id } : {}) };
   } catch (error) {
     if (error instanceof ZodError)

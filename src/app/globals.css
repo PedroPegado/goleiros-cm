@@ -1796,3 +1796,27 @@ dialog::backdrop {
     scroll-behavior: auto !important;
   }
 }
+
+.navigation-pending {
+  position: fixed;
+  top: 76px;
+  right: 16px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #fff;
+  color: #244534;
+  box-shadow: 0 3px 16px #0002;
+  font-size: 13px;
+  font-weight: 500;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin,
+  .skeleton {
+    animation: none !important;
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 import { LogoutButton } from "./auth-forms";
-import Link from "next/link";
+import Link from "@/components/pending-link";
 import { usePathname } from "next/navigation";
 import {
   House,
@@ -79,7 +79,9 @@ export function Navigation() {
 export function Header({
   students,
   alerts,
+  loading = false,
 }: {
+  loading?: boolean;
   students: { id: string; name: string }[];
   alerts: { id: string; studentId: string; name: string; message: string }[];
 }) {
@@ -100,7 +102,8 @@ export function Header({
         <Search size={18} />
         <input
           aria-label="Busca global de alunos"
-          placeholder="Buscar aluno..."
+          disabled={loading}
+          placeholder={loading ? "Carregando busca..." : "Buscar aluno..."}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
@@ -136,6 +139,7 @@ export function Header({
           <button
             className="icon-button"
             aria-label={`Notificações: ${alerts.length} pagamentos atrasados`}
+            disabled={loading}
             aria-expanded={open}
             onClick={() => setOpen(!open)}
           >

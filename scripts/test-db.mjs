@@ -14,6 +14,7 @@ const result = spawnSync(
     "node_modules/vitest/vitest.mjs",
     "run",
     "tests/payments.integration.test.ts",
+    "tests/performance.integration.test.ts",
   ],
   { stdio: "inherit", env: { ...process.env, RUN_DB_TESTS: "true" } },
 );

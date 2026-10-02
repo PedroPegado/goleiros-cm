@@ -60,7 +60,6 @@ export function ActionButton({
             }
             toast.success(success);
             if (redirectTo) router.push(redirectTo);
-            router.refresh();
           } catch {
             toast.error("Falha de conexão. Tente novamente.");
           }
@@ -223,7 +222,6 @@ export function StudentForm({
               id ? "Aluno atualizado." : "Aluno cadastrado com sucesso.",
             );
             router.push(`/alunos/${result.id}`);
-            router.refresh();
           } catch {
             toast.error("Falha de conexão.");
           }
@@ -426,7 +424,6 @@ export function EvaluationForm({
             }
             toast.success("Avaliação registrada.");
             router.push(`/alunos/${result.id}?tab=avaliacoes`);
-            router.refresh();
           } catch {
             toast.error("Falha de conexão.");
           }
@@ -549,7 +546,6 @@ function SimpleForm({
   className?: string;
 }) {
   const [pending, start] = useTransition();
-  const router = useRouter();
   const [error, setError] = useState("");
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -566,7 +562,6 @@ function SimpleForm({
         }
         toast.success(success);
         form.closest("dialog")?.close();
-        router.refresh();
       } catch {
         setError("Falha de conexão. Tente novamente.");
       }

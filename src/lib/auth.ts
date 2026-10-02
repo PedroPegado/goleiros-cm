@@ -9,7 +9,7 @@ import { allowPasswordAttempt, clearPasswordAttempts } from "./login-throttle";
 
 if (process.env.AUTH_URL) process.env.NEXTAUTH_URL = process.env.AUTH_URL;
 const lifetime = 7 * 24 * 60 * 60;
-const dummyHash = hash(randomBytes(32).toString("hex"), 12);
+let dummyHash: Promise<string> | undefined;
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   pages: { signIn: "/login", error: "/login" },
@@ -59,7 +59,8 @@ export const authOptions: NextAuthOptions = {
         });
         const valid = await compare(
           password,
-          user?.passwordHash ?? (await dummyHash),
+          user?.passwordHash ??
+            (await (dummyHash ??= hash(randomBytes(32).toString("hex"), 12))),
         );
         if (!user || !valid) return null;
         await clearPasswordAttempts(`login:${email}`);
@@ -77,6 +78,8 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           sub: user.id,
+          name: user.name,
+          email: user.email,
           sessionVersion: user.sessionVersion,
           sessionExpiresAt: Date.now() + lifetime * 1000,
         };
@@ -89,25 +92,18 @@ export const authOptions: NextAuthOptions = {
         return {};
       const current = await db.user.findUnique({
         where: { id: token.sub },
-        select: { sessionVersion: true },
+        select: { sessionVersion: true, name: true, email: true },
       });
       if (!current || current.sessionVersion !== token.sessionVersion)
         return {};
-      return token;
+      return { ...token, name: current.name, email: current.email };
     },
     async session({ session, token }) {
       if (!token.sub) {
         session.user = undefined;
         return session;
       }
-      const user = await db.user.findUnique({
-        where: { id: token.sub },
-        select: { id: true, email: true, name: true, sessionVersion: true },
-      });
-      session.user =
-        user && user.sessionVersion === token.sessionVersion
-          ? { id: user.id, email: user.email, name: user.name }
-          : undefined;
+      session.user = { id: token.sub, email: token.email, name: token.name };
       return session;
     },
     async redirect({ url, baseUrl }) {
