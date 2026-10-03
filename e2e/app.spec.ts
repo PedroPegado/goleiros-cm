@@ -83,7 +83,7 @@ test("cadastro, avaliação parcial, evolução, pagamento, medidas e desativaç
       .click();
     await page.getByLabel("Reflexo", { exact: true }).fill(String(score));
     await page
-      .getByLabel("Observação da aula (opcional)")
+      .getByLabel("Observações para o professor")
       .fill(`Nota parcial ${score}`);
     await page.getByRole("button", { name: "Salvar avaliação" }).click();
     await expect(
@@ -145,7 +145,7 @@ test("edição e exclusão de avaliação, critério e aviso configurável", asy
   await page.goto("/avaliacoes/nova?aluno=demo-student-0");
   await page.getByLabel("Reflexo", { exact: true }).fill("5");
   await page
-    .getByLabel("Observação da aula (opcional)")
+    .getByLabel("Observações para o professor")
     .fill("Avaliação temporária E2E");
   await page.getByRole("button", { name: "Salvar avaliação" }).click();
   const card = page

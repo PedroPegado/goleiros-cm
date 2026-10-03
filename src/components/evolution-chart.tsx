@@ -22,7 +22,13 @@ type Evaluation = {
   scores: { criterionId: string; name: string; value: number }[];
 };
 const colors = ["#137952", "#d28025", "#596cd4"];
-export function EvolutionChart({ evaluations }: { evaluations: Evaluation[] }) {
+export function EvolutionChart({
+  evaluations,
+  audience = "teacher",
+}: {
+  evaluations: Evaluation[];
+  audience?: "teacher" | "guardian";
+}) {
   const [selected, setSelected] = useState<string[]>(["average"]);
   const criteria = Array.from(
     new Map(
@@ -50,7 +56,11 @@ export function EvolutionChart({ evaluations }: { evaluations: Evaluation[] }) {
     return (
       <Empty
         title="A evolução começa com o próximo treino"
-        description="Registre pelo menos duas avaliações para comparar os resultados. Nenhum dado é estimado."
+        description={
+          audience === "guardian"
+            ? "A evolução será exibida quando o professor registrar pelo menos duas avaliações. Nenhum dado é estimado."
+            : "Registre pelo menos duas avaliações para comparar os resultados. Nenhum dado é estimado."
+        }
       />
     );
   return (

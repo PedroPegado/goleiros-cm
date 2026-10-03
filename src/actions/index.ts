@@ -11,6 +11,7 @@ import {
   civilSchema,
 } from "@/lib/validation";
 import { toDate, dueDateFor, today } from "@/lib/rules";
+import { guardianPhone } from "@/lib/guardian-credentials";
 import { requireUser } from "@/lib/require-user";
 type Result = { ok: true; id?: string } | { ok: false; error: string };
 /** Every exported mutation enters this server-side authorization boundary. */
@@ -43,11 +44,27 @@ export async function saveStudent(input: unknown, id?: string) {
   return mutate(async () => {
     const { height, weight, photo, ...data } = studentSchema.parse(input);
     return db.$transaction(async (tx) => {
+      const previous = id
+        ? await tx.student.findUniqueOrThrow({
+            where: { id },
+            select: { guardianPhone: true },
+          })
+        : null;
+      const revokeGuardian =
+        previous &&
+        guardianPhone(previous.guardianPhone) !== data.guardianPhone;
       const student = id
         ? await tx.student.update({
             where: { id },
             data: {
               ...data,
+              ...(revokeGuardian
+                ? {
+                    guardianAccessEnabled: false,
+                    guardianAccessCodeHash: null,
+                    guardianAccessVersion: { increment: 1 },
+                  }
+                : {}),
               birthDate: toDate(data.birthDate),
               joinedAt: toDate(data.joinedAt),
               photo: photo || null,
@@ -120,6 +137,7 @@ export async function saveEvaluation(input: unknown, id?: string) {
         studentId: data.studentId,
         date: toDate(data.date),
         notes: data.notes,
+        guardianFeedback: data.guardianFeedback || null,
         scores: { create: data.scores },
       };
       const result = id

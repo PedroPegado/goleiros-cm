@@ -376,6 +376,7 @@ export function EvaluationForm({
     studentId: string;
     date: string;
     notes: string;
+    guardianFeedback?: string | null;
     scores: { criterionId: string; value: number }[];
   };
   id?: string;
@@ -385,6 +386,7 @@ export function EvaluationForm({
       studentId: initial?.studentId || students[0]?.id || "",
       date: initial?.date || today(),
       notes: initial?.notes || "",
+      guardianFeedback: initial?.guardianFeedback || "",
     },
   });
   const [scores, setScores] = useState<Record<string, string>>(
@@ -509,13 +511,28 @@ export function EvaluationForm({
         )}
       </div>
       <div className="card form-card">
-        <Field label="Observação da aula (opcional)">
+        <Field label="Observações para o professor">
           <textarea
             {...register("notes")}
             rows={3}
-            placeholder="O que evoluiu? O que vamos trabalhar no próximo treino?"
+            placeholder="Anotações internas sobre a aula, pontos que precisam ser trabalhados, planejamento dos próximos treinos..."
+            maxLength={5000}
           />
         </Field>
+        <p className="muted">
+          Observações internas, visíveis somente para o professor.
+        </p>
+        <Field label="Feedback para o responsável">
+          <textarea
+            {...register("guardianFeedback")}
+            rows={4}
+            maxLength={5000}
+            placeholder="Descreva como foi o desempenho do aluno e os principais pontos trabalhados nesta aula..."
+          />
+        </Field>
+        <p className="muted">
+          Somente este feedback será compartilhado no Portal do Responsável.
+        </p>
         <div className="form-footer">
           <span className="muted">{values.length} critérios avaliados</span>
           <Submit pending={pending}>Salvar avaliação</Submit>

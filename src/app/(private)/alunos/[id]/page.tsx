@@ -1,3 +1,4 @@
+import { GuardianAccess } from "@/components/guardian-access";
 import { measure } from "@/lib/performance";
 import { requireUser } from "@/lib/require-user";
 import Link from "@/components/pending-link";
@@ -130,6 +131,12 @@ export default async function Profile({
             </a>
           </div>
         </section>
+        <GuardianAccess
+          studentId={id}
+          studentName={s.name}
+          phone={s.guardianPhone}
+          enabled={s.guardianAccessEnabled}
+        />
         <nav className="profile-tabs" aria-label="Seções do aluno">
           {tabs.map(([key, label]) => (
             <Link
@@ -325,6 +332,14 @@ export default async function Profile({
                   </div>
                   {e.notes && (
                     <p className="evaluation-note preserve-text">{e.notes}</p>
+                  )}
+                  {e.guardianFeedback && (
+                    <div className="guardian-feedback">
+                      <span className="eyebrow">
+                        FEEDBACK PARA O RESPONSÁVEL
+                      </span>
+                      <p className="preserve-text">{e.guardianFeedback}</p>
+                    </div>
                   )}
                   <div className="inline-actions">
                     <Button asChild variant="secondary">

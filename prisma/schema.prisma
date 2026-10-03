@@ -47,23 +47,26 @@ enum PaymentMethod {
 }
 
 model Student {
-  id            String                @id @default(cuid())
-  name          String
-  birthDate     DateTime              @db.Date
-  guardianName  String
-  guardianPhone String
-  dueDay        Int
-  monthlyFee    Decimal               @db.Decimal(10, 2)
-  joinedAt      DateTime              @db.Date
-  status        StudentStatus         @default(ACTIVE)
-  notes         String                @default("")
-  photo         String?
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  evaluations   Evaluation[]
-  payments      Payment[]
-  measurements  PhysicalMeasurement[]
-  studentNotes  StudentNote[]
+  id                     String                @id @default(cuid())
+  name                   String
+  birthDate              DateTime              @db.Date
+  guardianName           String
+  guardianPhone          String
+  guardianAccessCodeHash String?               @unique
+  guardianAccessEnabled  Boolean               @default(false)
+  guardianAccessVersion  Int                   @default(0)
+  dueDay                 Int
+  monthlyFee             Decimal               @db.Decimal(10, 2)
+  joinedAt               DateTime              @db.Date
+  status                 StudentStatus         @default(ACTIVE)
+  notes                  String                @default("")
+  photo                  String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  evaluations            Evaluation[]
+  payments               Payment[]
+  measurements           PhysicalMeasurement[]
+  studentNotes           StudentNote[]
 
   @@index([status, name])
 }
@@ -78,14 +81,15 @@ model EvaluationCriterion {
 }
 
 model Evaluation {
-  id        String            @id @default(cuid())
-  studentId String
-  student   Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  date      DateTime          @db.Date
-  notes     String            @default("")
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  scores    EvaluationScore[]
+  id               String            @id @default(cuid())
+  studentId        String
+  student          Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date             DateTime          @db.Date
+  notes            String            @default("")
+  guardianFeedback String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  scores           EvaluationScore[]
 
   @@index([studentId, date])
   @@index([date, createdAt])

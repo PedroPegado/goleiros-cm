@@ -52,6 +52,7 @@ export const studentSchema = z.object({
   weight: optionalNumber(1, 300),
 });
 export const evaluationSchema = z.object({
+  guardianFeedback: z.string().trim().max(5000).default(""),
   studentId: z.string().min(1),
   date: pastDate,
   notes: z.string().max(5000),

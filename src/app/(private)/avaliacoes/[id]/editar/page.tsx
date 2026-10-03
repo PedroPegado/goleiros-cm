@@ -37,6 +37,7 @@ export default async function EditEvaluation({
           studentId: e.studentId,
           date: civil(e.date),
           notes: e.notes,
+          guardianFeedback: e.guardianFeedback,
           scores: e.scores.map((s) => ({
             criterionId: s.criterionId,
             value: s.value,

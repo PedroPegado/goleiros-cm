@@ -1820,3 +1820,139 @@ dialog::backdrop {
     animation: none !important;
   }
 }
+
+/* Read-only family portal shares the school's palette and primitives. */
+.guardian-entry {
+  min-height: 100dvh;
+  max-width: none;
+  margin: 0;
+  padding: 36px 18px;
+  background: radial-gradient(ellipse at top, #dcecdf, #f5f7f2 65%);
+}
+.guardian-entry-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #143d2e;
+  font-weight: 750;
+  letter-spacing: 1px;
+  margin: 0 auto 28px;
+}
+.guardian-entry-brand small,
+.guardian-brand small {
+  display: block;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.guardian-entry-card {
+  max-width: 440px;
+  margin: auto;
+  padding: 28px 24px;
+}
+.guardian-entry-card h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 12px 0;
+}
+.guardian-welcome-icon {
+  display: inline-flex;
+  padding: 14px;
+  background: #edf5ee;
+  color: #137952;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+.guardian-entry-card > .eyebrow {
+  display: block;
+}
+.guardian-shell {
+  min-height: 100dvh;
+}
+.guardian-header {
+  justify-content: space-between;
+  max-width: none;
+}
+.guardian-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #143d2e;
+  font-weight: 750;
+  font-size: 16px;
+}
+.guardian-shell main {
+  max-width: 900px;
+  margin: auto;
+  padding: 26px 18px 24px;
+}
+.guardian-nav {
+  display: flex;
+  max-width: 900px;
+  margin: auto;
+}
+.guardian-shell .page-footer {
+  padding-bottom: 110px;
+}
+.guardian-shell .page-title h1 {
+  font-size: clamp(25px, 5vw, 34px);
+}
+.guardian-shell .profile-header {
+  display: block;
+}
+.guardian-shell .profile-main {
+  margin-bottom: 20px;
+}
+.guardian-feedback {
+  padding: 16px;
+  background: #f0f6ed;
+  border-left: 3px solid #85a87c;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.guardian-average {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 22px 0;
+}
+.guardian-average > strong {
+  color: #137952;
+  font-size: 42px;
+}
+.guardian-average > span {
+  color: #69796d;
+  font-size: 13px;
+}
+.guardian-access-dialog {
+  padding: 24px;
+}
+.guardian-access-dialog h2 {
+  font-size: 20px;
+}
+.guardian-access-dialog .button {
+  white-space: normal;
+}
+.guardian-access-dialog input {
+  font-size: 14px;
+}
+@media (max-width: 767px) {
+  .guardian-physical-stats .stat:last-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 768px) {
+  .guardian-shell main {
+    padding: 36px 30px;
+  }
+  .guardian-nav {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(900px, 100%);
+    border: 1px solid var(--line);
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+  }
+}
